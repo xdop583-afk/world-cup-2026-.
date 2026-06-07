@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>توقعات كأس العالم 2026 - أمريكا، كندا، المكسيك</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>توقعات كأس العالم 2026 🏆</h1>
+        <p>اصنع سيناريو المونديال الأكبر في التاريخ (48 منتخبًا - 12 مجموعة) واختر بطلك المفضّل!</p>
+    </header>
+
+    <h2 class="section-title">دور المجموعات (اختر المتصدر والوصيف)</h2>
+    <div class="groups-container" id="groups-wrapper"></div>
+
+    <h2 class="section-title">دور الـ 16 الإقصائي</h2>
+    <div class="grid-knockout" id="round16-wrapper"></div>
+
+    <h2 class="section-title">ربع النهائي</h2>
+    <div class="grid-knockout" id="quarter-wrapper"></div>
+
+    <h2 class="section-title">نصف النهائي</h2>
+    <div class="grid-knockout" id="semi-wrapper"></div>
+
+    <h2 class="section-title">المباراة النهائية وبطل العالم</h2>
+    <div class="knockout-stage">
+        <div class="match-card" style="max-width: 600px;">
+            <div class="match-title">النهائي الكبير والـتتويج</div>
+            <div class="match-teams">
+                <button class="btn-team" id="final-t1" onclick="selectWinner('champion', this.innerText, 'final-t1')">؟</button>
+                <span style="font-weight: bold;">ضد</span>
+                <button class="btn-team" id="final-t2" onclick="selectWinner('champion', this.innerText, 'final-t2')">؟</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="champion-section">
+        <h3>بطل كأس العالم 2026 هو:</h3>
+        <div id="champion-name">لم يحدد بعد 🏆</div>
+    </div>
+
+    <script href="script.js" src="script.js"></script>
+</body>
+</html>
