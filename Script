@@ -1,0 +1,123 @@
+// بيانات المجموعات الـ 12
+const allGroups = {
+    'A': ['كندا', 'المكسيك', 'أمريكا', 'بنما'],
+    'B': ['إسبانيا', 'البرتغال', 'المغرب', 'السعودية'],
+    'C': ['البرازيل', 'الأرجنتين', 'أوروغواي', 'كولومبيا'],
+    'D': ['فرنسا', 'إنجلترا', 'ألمانيا', 'إيطاليا'],
+    'E': ['هولندا', 'بلجيكا', 'كرواتيا', 'سويسرا'],
+    'F': ['السنغال', 'مصر', 'الجزائر', 'تونس'],
+    'G': ['اليابان', 'كوريا ج', 'أستراليا', 'إيران'],
+    'H': ['نيجيريا', 'الكاميرون', 'غانا', 'كوت ديفوار'],
+    'I': ['السويد', 'الدنمارك', 'صربيا', 'بولندا'],
+    'J': ['الإكوادور', 'بيرو', 'تشيلي', 'فنزويلا'],
+    'K': ['ويلز', 'اسكتلندا', 'أوكرانيا', 'تركيا'],
+    'L': ['قطر', 'العراق', 'الإمارات', 'عمان']
+};
+
+let selectedTeams = {
+    rank1: {}, rank2: {}, rank3: {}, best8: []
+};
+
+function renderGroups() {
+    const rightContainer = document.getElementById('right-groups');
+    const leftContainer = document.getElementById('left-groups');
+    rightContainer.innerHTML = ''; leftContainer.innerHTML = '';
+
+    const groupNames = Object.keys(allGroups);
+    
+    groupNames.forEach((group, index) => {
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'group-box';
+        groupDiv.innerHTML = `<div class="group-title">المجموعة ${group}</div>`;
+        
+        allGroups[group].forEach(team => {
+            const teamDiv = document.createElement('div');
+            teamDiv.className = 'team-item';
+            teamDiv.innerText = team;
+            
+            // تحديد الكلاس بناءً على الحالة
+            if(selectedTeams.rank1[group] === team) { teamDiv.classList.add('rank-1'); teamDiv.innerHTML += ' <span>(1)</span>'; }
+            else if(selectedTeams.rank2[group] === team) { teamDiv.classList.add('rank-2'); teamDiv.innerHTML += ' <span>(2)</span>'; }
+            else if(selectedTeams.rank3[group] === team) { 
+                if(selectedTeams.best8.includes(team)) {
+                    teamDiv.classList.add('rank-3-qualified'); 
+                    teamDiv.innerHTML += ' <span>(تأهل)</span>';
+                } else {
+                    teamDiv.classList.add('rank-3'); 
+                    teamDiv.innerHTML += ' <span>(3)</span>';
+                }
+            }
+
+            teamDiv.onclick = () => handleTeamClick(group, team);
+            groupDiv.appendChild(teamDiv);
+        });
+
+        // أول 6 مجموعات يمين، والباقي يسار
+        if(index < 6) rightContainer.appendChild(groupDiv);
+        else leftContainer.appendChild(groupDiv);
+    });
+
+    updateBracket();
+}
+
+function handleTeamClick(group, team) {
+    // إذا كان من أفضل 8 (ثوالث) وتم النقر عليه، يتم إلغاؤه من التأهل ولكن يبقى ثالثاً
+    if (selectedTeams.best8.includes(team)) {
+        selectedTeams.best8 = selectedTeams.best8.filter(t => t !== team);
+        renderGroups();
+        return;
+    }
+
+    // إذا كان ثالثاً ولم يتأهل بعد، وحاول النقر عليه (لتأهيله كأفضل 8)
+    if (selectedTeams.rank3[group] === team) {
+        if(selectedTeams.best8.length < 8) {
+            selectedTeams.best8.push(team);
+        } else {
+            // إذا اكتمل العدد 8 وحاول النقر، يتم إعادة تعيينه بالكامل (إلغاء التحديد)
+            selectedTeams.rank3[group] = null;
+        }
+        renderGroups();
+        return;
+    }
+
+    // منطق الترتيب (أول -> ثاني -> ثالث -> إلغاء)
+    if (selectedTeams.rank1[group] === team) {
+        selectedTeams.rank1[group] = null;
+        selectedTeams.rank2[group] = team;
+    } else if (selectedTeams.rank2[group] === team) {
+        selectedTeams.rank2[group] = null;
+        selectedTeams.rank3[group] = team;
+    } else if (selectedTeams.rank3[group] === team) {
+         selectedTeams.rank3[group] = null; // الإلغاء تم التعامل معه أعلاه جزئياً
+    } else {
+        // إذا لم يكن محددًا، نجعله المركز الأول (إذا كان شاغراً)، أو الثاني، أو الثالث
+        if (!selectedTeams.rank1[group]) selectedTeams.rank1[group] = team;
+        else if (!selectedTeams.rank2[group]) selectedTeams.rank2[group] = team;
+        else if (!selectedTeams.rank3[group]) selectedTeams.rank3[group] = team;
+    }
+    
+    renderGroups();
+}
+
+function updateBracket() {
+    const list = document.getElementById('qualified-teams-list');
+    list.innerHTML = '';
+    
+    // جمع كل المتأهلين
+    let qualified = [];
+    Object.values(selectedTeams.rank1).forEach(t => t && qualified.push(t + ' (بطل)'));
+    Object.values(selectedTeams.rank2).forEach(t => t && qualified.push(t + ' (وصيف)'));
+    selectedTeams.best8.forEach(t => qualified.push(t + ' (أفضل ثالث)'));
+
+    qualified.forEach(team => {
+        const span = document.createElement('span');
+        span.className = 'q-team';
+        span.innerText = team;
+        list.appendChild(span);
+    });
+
+    // هنا يمكنك ربط مصفوفة (qualified) مباشرة بالخانات في مشجرتك الأصلية
+}
+
+// تهيئة العرض المبدئي
+renderGroups();
