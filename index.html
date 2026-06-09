@@ -3,45 +3,356 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>توقعات كأس العالم 2026 - أمريكا، كندا، المكسيك</title>
-    <link rel="stylesheet" href="style.css">
+    <title>مشجرة كأس العالم 2026</title>
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --box-bg: #1a1a1a;
+            --border-color: #a68940; 
+            --text-color: #ffffff;
+            --text-muted: #888888;
+            --highlight: #285430; 
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--border-color);
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        /* تصميم المجموعات العلوية */
+        .groups-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .group-box {
+            background-color: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            width: 140px;
+            overflow: hidden;
+            font-size: 0.85em;
+        }
+
+        .group-header {
+            background-color: var(--border-color);
+            color: #000;
+            text-align: center;
+            font-weight: bold;
+            padding: 4px;
+        }
+
+        .group-team {
+            padding: 5px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .group-team:last-child { border-bottom: none; }
+
+        /* تصميم المشجرة */
+        .bracket-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            min-width: 1200px;
+            gap: 20px;
+        }
+
+        .bracket-half {
+            display: flex;
+            flex-direction: row;
+            width: 40%;
+            justify-content: space-between;
+        }
+
+        .bracket-half.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .round {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 22%;
+        }
+
+        .match {
+            background-color: var(--box-bg);
+            border: 1px solid #444;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .team-slot {
+            padding: 8px 5px;
+            font-size: 0.85em;
+            cursor: pointer;
+            border-bottom: 1px solid #333;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 20px;
+        }
+        
+        .team-slot:last-child { border-bottom: none; }
+        
+        .team-slot:hover {
+            background-color: #333;
+        }
+
+        .team-slot.selected {
+            background-color: var(--highlight);
+            border-color: var(--border-color);
+            font-weight: bold;
+        }
+
+        /* قسم النهائي في المنتصف */
+        .center-finals {
+            width: 15%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .trophy {
+            width: 120px;
+            height: 250px;
+            background: url('https://upload.wikimedia.org/wikipedia/en/thumb/e/e3/2026_FIFA_World_Cup_logo.svg/1200px-2026_FIFA_World_Cup_logo.svg.png') no-repeat center center;
+            background-size: contain;
+            margin: 20px 0;
+        }
+
+        .final-match {
+            width: 100%;
+            background-color: var(--box-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .final-title {
+            color: var(--border-color);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
 
-    <header>
-        <h1>توقعات كأس العالم 2026 🏆</h1>
-        <p>اصنع سيناريو المونديال الأكبر في التاريخ (48 منتخبًا - 12 مجموعة) واختر بطلك المفضّل!</p>
-    </header>
+    <h1>مشجرة كأس العالم 2026 الرسمية</h1>
 
-    <h2 class="section-title">دور المجموعات (اختر المتصدر والوصيف)</h2>
-    <div class="groups-container" id="groups-wrapper"></div>
+    <div class="groups-container" id="groups-container"></div>
 
-    <h2 class="section-title">دور الـ 16 الإقصائي</h2>
-    <div class="grid-knockout" id="round16-wrapper"></div>
+    <div class="bracket-wrapper">
+        <div class="bracket-half" id="right-bracket"></div>
 
-    <h2 class="section-title">ربع النهائي</h2>
-    <div class="grid-knockout" id="quarter-wrapper"></div>
-
-    <h2 class="section-title">نصف النهائي</h2>
-    <div class="grid-knockout" id="semi-wrapper"></div>
-
-    <h2 class="section-title">المباراة النهائية وبطل العالم</h2>
-    <div class="knockout-stage">
-        <div class="match-card" style="max-width: 600px;">
-            <div class="match-title">النهائي الكبير والـتتويج</div>
-            <div class="match-teams">
-                <button class="btn-team" id="final-t1" onclick="selectWinner('champion', this.innerText, 'final-t1')">؟</button>
-                <span style="font-weight: bold;">ضد</span>
-                <button class="btn-team" id="final-t2" onclick="selectWinner('champion', this.innerText, 'final-t2')">؟</button>
+        <div class="center-finals">
+            <div class="final-title">النهائي</div>
+            <div class="match final-match" id="final-match">
+                <div class="team-slot" onclick="advanceTeam(this, 'champion')" data-target="champion" data-slot="0">---</div>
+                <div class="team-slot" onclick="advanceTeam(this, 'champion')" data-target="champion" data-slot="1">---</div>
+            </div>
+            <div class="trophy"></div>
+            <div class="final-title">البطل</div>
+            <div class="match final-match">
+                <div class="team-slot" id="champion" style="text-align:center; color:#a68940; font-weight:bold; font-size:1.2em; justify-content:center;">؟؟؟</div>
             </div>
         </div>
+
+        <div class="bracket-half reverse" id="left-bracket"></div>
     </div>
 
-    <div class="champion-section">
-        <h3>بطل كأس العالم 2026 هو:</h3>
-        <div id="champion-name">لم يحدد بعد 🏆</div>
-    </div>
+<script>
+    // المنتخبات الرسمية المؤكدة لمجموعات كأس العالم 2026
+    const groupsData = [
+        { name: "A", teams: ["🇲🇽 المكسيك", "🇿🇦 جنوب إفريقيا", "🇰🇷 كوريا الجنوبية", "🇨🇿 التشيك"] },
+        { name: "B", teams: ["🇨🇦 كندا", "🇧🇦 البوسنة والهرسك", "🇶🇦 قطر", "🇨🇭 سويسرا"] },
+        { name: "C", teams: ["🇧🇷 البرازيل", "🇲🇦 المغرب", "🇭🇹 هايتي", "🏴󠁧󠁢󠁳󠁣󠁴󠁿 اسكتلندا"] },
+        { name: "D", teams: ["🇺🇸 أمريكا", "🇵🇾 باراغواي", "🇦🇺 أستراليا", "🇹🇷 تركيا"] },
+        { name: "E", teams: ["🇩🇪 ألمانيا", "🇨🇼 كوراساو", "🇨🇮 ساحل العاج", "🇪🇨 الإكوادور"] },
+        { name: "F", teams: ["🇳🇱 هولندا", "🇯🇵 اليابان", "🇸🇪 السويد", "🇹🇳 تونس"] },
+        { name: "G", teams: ["🇧🇪 بلجيكا", "🇪🇬 مصر", "🇮🇷 إيران", "🇳🇿 نيوزيلندا"] },
+        { name: "H", teams: ["🇪🇸 إسبانيا", "🇨🇻 الرأس الأخضر", "🇸🇦 السعودية", "🇺🇾 أوروغواي"] },
+        { name: "I", teams: ["🇫🇷 فرنسا", "🇸🇳 السنغال", "🇮🇶 العراق", "🇳🇴 النرويج"] },
+        { name: "J", teams: ["🇦🇷 الأرجنتين", "🇩🇿 الجزائر", "🇦🇹 النمسا", "🇯🇴 الأردن"] },
+        { name: "K", teams: ["🇵🇹 البرتغال", "🇨🇩 الكونغو الديمقراطية", "🇺🇿 أوزبكستان", "🇨🇴 كولومبيا"] },
+        { name: "L", teams: ["🏴󠁧󠁢󠁥󠁮󠁧󠁿 إنجلترا", "🇭🇷 كرواتيا", "🇬🇭 غانا", "🇵🇦 بنما"] }
+    ];
 
-    <script href="script.js" src="script.js"></script>
+    const groupsContainer = document.getElementById('groups-container');
+    groupsData.forEach(group => {
+        let html = `<div class="group-box"><div class="group-header">المجموعة ${group.name}</div>`;
+        group.teams.forEach(team => {
+            html += `<div class="group-team">${team}</div>`;
+        });
+        html += `</div>`;
+        groupsContainer.innerHTML += html;
+    });
+
+    const roundsMap = [8, 4, 2, 1]; 
+
+    function buildBracketSide(containerId, prefix) {
+        const container = document.getElementById(containerId);
+        let previousRoundMatches = [];
+
+        roundsMap.forEach((matchCount, roundIndex) => {
+            let roundDiv = document.createElement('div');
+            roundDiv.className = 'round';
+            let currentRoundMatches = [];
+
+            for (let i = 0; i < matchCount; i++) {
+                let matchId = `${prefix}-r${roundIndex}-m${i}`;
+                currentRoundMatches.push(matchId);
+                
+                let targetMatchId = '';
+                let targetSlot = i % 2; 
+
+                if (roundIndex < roundsMap.length - 1) {
+                    let nextMatchIndex = Math.floor(i / 2);
+                    targetMatchId = `${prefix}-r${roundIndex + 1}-m${nextMatchIndex}`;
+                } else {
+                    targetMatchId = 'final-match'; 
+                    targetSlot = prefix === 'right' ? 0 : 1;
+                }
+
+                let t1Text = roundIndex === 0 ? `متصدر/وصيف` : `---`;
+                let t2Text = roundIndex === 0 ? `وصيف/ثالث` : `---`;
+
+                roundDiv.innerHTML += `
+                    <div class="match" id="${matchId}">
+                        <div class="team-slot" onclick="advanceTeam(this, '${targetMatchId}')" data-target="${targetMatchId}" data-slot="${targetSlot}" data-current-slot="0">${t1Text}</div>
+                        <div class="team-slot" onclick="advanceTeam(this, '${targetMatchId}')" data-target="${targetMatchId}" data-slot="${targetSlot}" data-current-slot="1">${t2Text}</div>
+                    </div>
+                `;
+            }
+            container.appendChild(roundDiv);
+            previousRoundMatches = currentRoundMatches;
+        });
+    }
+
+    buildBracketSide('right-bracket', 'right');
+    buildBracketSide('left-bracket', 'left');
+
+    function initializeRound32() {
+        const allR32Slots = document.querySelectorAll('.round:first-child .team-slot');
+        let teamIndex = 0;
+        let flatTeams = groupsData.flatMap(g => g.teams);
+        
+        allR32Slots.forEach(slot => {
+            if(flatTeams[teamIndex]) {
+                slot.innerText = flatTeams[teamIndex];
+                teamIndex++;
+            }
+        });
+    }
+    initializeRound32();
+
+    window.advanceTeam = function(element, targetId) {
+        const teamName = element.innerText;
+        if (teamName === '---' || teamName === 'متصدر/وصيف' || teamName === 'وصيف/ثالث' || teamName === '؟؟؟') return;
+
+        const isAlreadySelected = element.classList.contains('selected');
+        const targetSlotIndex = element.getAttribute('data-slot');
+        let targetElement = null;
+
+        if (targetId === 'champion') {
+            targetElement = document.getElementById('champion');
+        } else {
+            const targetMatch = document.getElementById(targetId);
+            if(targetMatch) {
+                targetElement = targetMatch.querySelectorAll('.team-slot')[targetSlotIndex];
+            }
+        }
+
+        if (isAlreadySelected) {
+            element.classList.remove('selected');
+            if (targetElement) {
+                targetElement.innerText = '---';
+                targetElement.classList.remove('selected');
+                clearForward(targetElement);
+            }
+        } else {
+            const siblings = element.parentElement.querySelectorAll('.team-slot');
+            siblings.forEach(sib => {
+                sib.classList.remove('selected');
+                const sibTargetId = sib.getAttribute('data-target');
+                if (sibTargetId && sibTargetId !== 'champion') {
+                    const sibTargetMatch = document.getElementById(sibTargetId);
+                    if(sibTargetMatch) {
+                        const sibTargetEl = sibTargetMatch.querySelectorAll('.team-slot')[sib.getAttribute('data-slot')];
+                        if(sibTargetEl.innerText === sib.innerText) {
+                            sibTargetEl.innerText = '---';
+                            sibTargetEl.classList.remove('selected');
+                            clearForward(sibTargetEl);
+                        }
+                    }
+                }
+            });
+
+            element.classList.add('selected');
+            if (targetElement) {
+                targetElement.innerText = teamName;
+                targetElement.classList.remove('selected'); 
+                
+                if(targetId === 'champion') {
+                    targetElement.style.color = "#ffd700";
+                }
+            }
+        }
+    };
+
+    function clearForward(element) {
+        let currentEl = element;
+        while(currentEl) {
+            let nextId = currentEl.getAttribute('data-target');
+            if(!nextId) break;
+            
+            if(nextId === 'champion') {
+                const champ = document.getElementById('champion');
+                if(champ.innerText === currentEl.innerText) {
+                    champ.innerText = '؟؟؟';
+                    champ.style.color = "var(--border-color)";
+                }
+                break;
+            }
+
+            const nextMatch = document.getElementById(nextId);
+            if(nextMatch) {
+                const nextSlotIndex = currentEl.getAttribute('data-slot');
+                const nextEl = nextMatch.querySelectorAll('.team-slot')[nextSlotIndex];
+                if(nextEl.innerText === currentEl.innerText) {
+                    nextEl.innerText = '---';
+                    nextEl.classList.remove('selected');
+                    currentEl = nextEl;
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+    }
+</script>
+
 </body>
 </html>
